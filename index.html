@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ku" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>Duhok Computer - سیستەمێ نمران</title>
+    <style>
+        body { font-family: Tahoma, sans-serif; background-color: #f4f6f9; text-align: center; padding: 20px; }
+        .box { background: white; padding: 20px; border-radius: 12px; width: 750px; margin: auto; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        input, button { padding: 10px; margin: 8px 0; width: 80%; font-size: 15px; border-radius: 6px; border: 1px solid #ccc; }
+        button { background-color: #28a745; color: white; border: none; cursor: pointer; font-weight: bold; width: 82%; }
+        button:hover { background-color: #218838; }
+        .btn-admin { background-color: #007bff; }
+        .btn-admin:hover { background-color: #0056b3; }
+        .btn-danger { background-color: #dc3545; }
+        .btn-danger:hover { background-color: #c82333; }
+        .card { margin-top: 20px; padding: 15px; border: 2px solid #007bff; border-radius: 8px; background: #fff; text-align: right; display: none; }
+        .info-header { background: #e7f1ff; padding: 10px; border-radius: 6px; margin-bottom: 15px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
+        th, td { border: 1px solid #ddd; padding: 6px; text-align: center; }
+        th { background-color: #007bff; color: white; }
+        .admin-box { background: #fff3cd; border: 1px solid #ffeeba; text-align: right; }
+        .admin-box input { width: 95%; display: block; margin: 5px auto; }
+        .hidden { display: none; }
+        .subject-row { background: #f9f9f9; padding: 10px; margin-bottom: 10px; border-radius: 6px; border: 1px solid #eee; text-align: right; position: relative; }
+        .subject-row input { display: inline-block; margin: 3px; }
+    </style>
+</head>
+<body>
+
+<div class="box">
+    <h2>Duhok Computer - سیستەمێ نمراتییا پەیمانگەهێ</h2>
+    <p>ژ بۆ دیتینا کارتا نمران، کۆدێ قوتابی ل ڤێرێ بنڤێسە:</p>
+    <input type="text" id="code" placeholder="کۆدێ قوتابی (بۆ نموونە: 246229)">
+    <br>
+    <button onclick="searchStudent()">پشکنیتا کارتا نمران</button>
+
+    <div id="result" class="card">
+        <div class="info-header">
+            <p><strong>ناڤێ قوتابی:</strong> <span id="sName"></span></p>
+            <p><strong>بەش:</strong> <span id="sDept"></span> &nbsp;&nbsp;|&nbsp;&nbsp; <strong>قۆناغ:</strong> <span id="sStage"></span></p>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ماددە / پەرتووک</th>
+                    <th>کۆششا سالانە</th>
+                    <th>خولا ئێکم</th>
+                    <th>خولا دووەم</th>
+                </tr>
+            </thead>
+            <tbody id="gradesTableBody"></tbody>
+        </table>
+        
+        <div style="margin-top: 15px; font-size: 15px; background: #f8f9fa; padding: 10px; border-radius: 6px; text-align: center;">
+            <p><strong>تێکڕایا نمران (المعدل):</strong> <span id="sAverage" style="color: #007bff; font-weight: bold;"></span></p>
+            <p style="margin-top: 5px;"><strong>ئەنجامێ گشتی:</strong> <span id="sFinalStatus" style="font-weight: bold;"></span></p>
+            <div id="failedSubjectsContainer" style="margin-top: 10px; color: red; font-weight: bold;"></div>
+        </div>
+    </div>
+</div>
+
+<!-- بەشا چوونەژوورەوەیا مامۆستایی (Admin Login) -->
+<div class="box admin-box" id="loginBox" style="text-align: center;">
+    <h3>چوونا مامۆستایی (Admin Login)</h3>
+    <p>تکایە پەیڤا تێپەڕ (Password) بنڤێسە ژ بۆ ڤەکرنا بەشا زێدەکرنا قوتابیان:</p>
+    <input type="password" id="adminPassword" placeholder="پەیڤا تێپەڕ بنڤێسە" style="width: 80%;">
+    <br>
+    <button class="btn-admin" onclick="checkAdminLogin()">چوونەژوورەوە</button>
+</div>
+
+<!-- بەشا زێدەکرن و گوهۆڕینا نمرە و پەیڤا تێپەڕ ژ لایێ مامۆستایی ڤە -->
+<div class="box admin-box hidden" id="adminPanel">
+    <h3 style="text-align: center;">بەشا مامۆستایی (رێڤەبرنا قوتابیان و پەیڤا تێپەڕ)</h3>
+    
+    <div style="background: #fff8e1; padding: 10px; border-radius: 6px; margin-bottom: 15px; border: 1px solid #ffe0b2;">
+        <h4>گوهۆڕینا پەیڤا تێپەڕ (Password) یا ئەدمینی:</h4>
+        <input type="password" id="newAdminPass" placeholder="پەیڤا تێپەڕیا نوو بنڤێسە" style="width: 90%;">
+        <button type="button" onclick="changeAdminPassword()" style="background-color: #ffc107; color: #333; width: 100%; margin-top: 5px;">گوهۆڕینا پەیڤا تێپەڕ</button>
+    </div>
+    
+    <hr style="border: 0; border-top: 1px solid #ddd; margin: 15px 0;">
+
+    <label>کۆدێ قوتابی:</label>
+    <input type="text" id="newCode" placeholder="بۆ نموونە: 246250">
+    
+    <label>ناڤێ تەواڤ یێ قوتابی:</label>
+    <input type="text" id="newName" placeholder="ناڤێ قوتابی">
+    
+    <label>بەش:</label>
+    <input type="text" id="newDept" placeholder="بۆ نموونە: پڕۆگرامسازی">
+    
+    <label>قۆناغ:</label>
+    <input type="text" id="newStage" placeholder="بۆ نموونە: دووەم">
+
+    <h4 style="margin-top: 15px; color: #333;">ماددە و پەرتووک (تە دکاری ب ئارەزویا خوە زێدە بکەی یان ژێ ببەی):</h4>
+    <div id="subjectsInputsContainer"></div>
+    
+    <button type="button" onclick="addSubjectInput()" style="background-color: #17a2b8; width: 100%; margin-top: 5px;">+ زێدەکرنا ماددەکا دی</button>
+
+    <button class="btn-admin" onclick="addNewStudent()" style="width: 100%; margin-top: 15px;">تۆمارکرن / گوهۆڕینا قوتابی</button>
+    <br><br>
+    <button class="btn-danger" style="width: 100%;" onclick="logoutAdmin()">چوونە دەرڤە</button>
+</div>
+
+<script>
+    let database = {
+        "246229": {
+            name: "هۆگر حوسێن جبڕائیل عوسمان",
+            dept: "پڕۆگرامسازی کۆمپیوتەر",
+            stage: "دووەم",
+            subjects: [
+                { name: "پەروەردەیا ئیسلامی", yearWork: "75", firstTerm: "70", secondTerm: "-" },
+                { name: "زمان و ئەدەبی کوردی", yearWork: "80", firstTerm: "78", secondTerm: "-" },
+                { name: "زمانێ عەرەبی", yearWork: "65", firstTerm: "60", secondTerm: "-" },
+                { name: "زمانێ ئینگلیزی", yearWork: "70", firstTerm: "65", secondTerm: "-" },
+                { name: "ماددەیا پڕۆگرامسازی (١)", yearWork: "85", firstTerm: "90", secondTerm: "-" }
+            ]
+        }
+    };
+
+    window.onload = function() {
+        for (let i = 0; i < 3; i++) {
+            addSubjectInput();
+        }
+    };
+
+    function addSubjectInput(subName = "", yw = "", f1 = "") {
+        let container = document.getElementById("subjectsInputsContainer");
+        let div = document.createElement("div");
+        div.className = "subject-row";
+        div.innerHTML = `
+            ناڤێ بابەتێ / پەرتووکێ: <input type="text" class="sub-name" value="${subName}" placeholder="بۆ نموونە: پڕۆگرامسازی" style="width: 85%;">
+            کۆششا سالانە: <input type="number" class="sub-yw" value="${yw}" placeholder="نمرە" style="width: 40%; display:inline-block;">
+            خولا ئێکم: <input type="number" class="sub-f1" value="${f1}" placeholder="نمرە" style="width: 40%; display:inline-block;">
+            <button type="button" onclick="this.parentElement.remove()" style="background-color: #dc3545; width: auto; padding: 5px 10px; font-size: 12px; margin-right: 5px;">ژێبرن</button>
+        `;
+        container.appendChild(div);
+    }
+
+    function searchStudent() {
+        let val = document.getElementById("code").value.trim();
+        let resCard = document.getElementById("result");
+        let tbody = document.getElementById("gradesTableBody");
+
+        if (database[val]) {
+            let student = database[val];
+            document.getElementById("sName").innerText = student.name;
+            document.getElementById("sDept").innerText = student.dept;
+            document.getElementById("sStage").innerText = student.stage;
+
+            tbody.innerHTML = "";
+            let totalSum = 0;
+            let count = 0;
+            let failedList = [];
+
+            student.subjects.forEach(sub => {
+                let gradeToCalculate = sub.firstTerm !== "-" ? Number(sub.firstTerm) : (sub.yearWork !== "-" ? Number(sub.yearWork) : 0);
+                totalSum += gradeToCalculate;
+                count++;
+
+                if (gradeToCalculate < 50) {
+                    failedList.push(`${sub.name} (${gradeToCalculate})`);
+                }
+
+                let row = `<tr>
+                    <td>${sub.name}</td>
+                    <td>${sub.yearWork}</td>
+                    <td>${sub.firstTerm}</td>
+                    <td>${sub.secondTerm}</td>
+                </tr>`;
+                tbody.innerHTML += row;
+            });
+
+            let average = count > 0 ? (totalSum / count).toFixed(2) : 0;
+            document.getElementById("sAverage").innerText = average;
+
+            let finalStatusElem = document.getElementById("sFinalStatus");
+            let failedContainer = document.getElementById("failedSubjectsContainer");
+
+            if (failedList.length === 0) {
+                finalStatusElem.innerText = "دەرچوو ب سەرکەفتن";
+                finalStatusElem.style.color = "green";
+                failedContainer.innerHTML = "";
+            } else {
+                finalStatusElem.innerText = "ماوە (کەوتوو)";
+                finalStatusElem.style.color = "red";
+                failedContainer.innerHTML = `<span style="color: red;">ماددەیێن کەوتوو (ب ڕەنگێ سور):</span><br>` + failedList.join(", ");
+            }
+
+            resCard.style.display = "block";
+        } else {
+            alert("کۆدێ قوتابی نەهاتە دیتن!");
+            resCard.style.display = "none";
+        }
+    }
+
+    function checkAdminLogin() {
+        let pass = document.getElementById("adminPassword").value.trim();
+        let currentAdminPass = localStorage.getItem("adminPass") || "1234";
+
+        if (pass === currentAdminPass) {
+            document.getElementById("loginBox").classList.add("hidden");
+            document.getElementById("adminPanel").classList.remove("hidden");
+            document.getElementById("adminPassword").value = "";
+        } else {
+            alert("پەیڤا تێپەڕ هەڵە یە! (ئەگەر تە نەگۆڕی بیت، سەرەتایی 1234یە)");
+        }
+    }
+
+    function changeAdminPassword() {
+        let newPass = document.getElementById("newAdminPass").value.trim();
+        if (newPass === "") {
+            alert("تکایە پەیڤا تێپەڕیا نوو پڕ بکە!");
+            return;
+        }
+        localStorage.setItem("adminPass", newPass);
+        alert("پەیڤا تێپەڕ ب سەرکەفتن هاتە گۆڕین و بۆ جارا داهاتوو هندی هەمان پاسۆرد کار بکەت!");
+        document.getElementById("newAdminPass").value = "";
+    }
+
+    function logoutAdmin() {
+        document.getElementById("adminPanel").classList.add("hidden");
+        document.getElementById("loginBox").classList.remove("hidden");
+        document.getElementById("adminPassword").value = "";
+    }
+
+    function addNewStudent() {
+        let code = document.getElementById("newCode").value.trim();
+        let name = document.getElementById("newName").value.trim();
+        let dept = document.getElementById("newDept").value.trim();
+        let stage = document.getElementById("newStage").value.trim();
+
+        if (code === "" || name === "" || dept === "") {
+            alert("تکایە خانەیێن سەرەکی یێن قوتابی پڕ بکە!");
+            return;
+        }
+
+        let subjectsArr = [];
+        let rows = document.querySelectorAll("#subjectsInputsContainer .subject-row");
+
+        rows.forEach(row => {
+            let sName = row.querySelector(".sub-name").value.trim();
+            let ywVal = row.querySelector(".sub-yw").value.trim();
+            let f1Val = row.querySelector(".sub-f1").value.trim();
+
+            if (sName !== "") {
+                let yw = ywVal !== "" ? ywVal : "-";
+                let f1 = f1Val !== "" ? f1Val : "-";
+
+                subjectsArr.push({
+                    name: sName,
+                    yearWork: yw,
+                    firstTerm: f1,
+                    secondTerm: "-"
+                });
+            }
+        });
+
+        database[code] = {
+            name: name,
+            dept: dept,
+            stage: stage,
+            subjects: subjectsArr
+        };
+
+        alert("داتایێن قوتابی ب سەرکەفتن هاتنە تۆمارکرن یان نووکرن!");
+        
+        document.getElementById("newCode").value = "";
+        document.getElementById("newName").value = "";
+        document.getElementById("newDept").value = "";
+        document.getElementById("newStage").value = "";
+    }
+</script>
+
+</body>
+</html>
