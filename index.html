@@ -1,154 +1,639 @@
 <!DOCTYPE html>
-<html lang="ku" dir="rtl">
+<html lang="ku" dir="rtl" id="htmlRoot">
 <head>
     <meta charset="UTF-8">
-    <title>Duhok Computer - پەیمانگای کۆمپیتەر</title>
-    <link rel="manifest" href="manifest.json">
+    <title>Duhok Computer - سیستەمێ نمران</title>
     <style>
-        body { font-family: Tahoma, sans-serif; background-color: #f4f6f9; text-align: center; padding: 20px; }
-        .box { background: white; padding: 20px; border-radius: 12px; width: 750px; margin: auto; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        h2 { color: #2c3e50; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        th, td { border: 1px solid #ddd; padding: 10px; text-align: center; font-size: 14px; }
-        th { background-color: #007bff; color: white; }
-        input, select { padding: 8px; margin: 5px; width: 80%; border: 1px solid #ccc; border-radius: 6px; }
-        button { background: #28a745; color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; }
-        button:hover { background: #218838; }
+        :root {
+            --bg-color: #f4f6f9;
+            --box-bg: #ffffff;
+            --text-color: #333333;
+            --input-bg: #ffffff;
+            --input-border: #ccc;
+            --input-text: #333333;
+            --table-border: #bbb;
+            --header-bg: #007bff;
+            --header-text: white;
+            --info-bg: #e7f1ff;
+            --admin-bg: #fff3cd;
+            --admin-border: #ffeeba;
+            --row-bg: #f9f9f9;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #18191a;
+            --box-bg: #242526;
+            --text-color: #e4e6eb;
+            --input-bg: #3a3b3c;
+            --input-text: #ffffff;
+            --input-border: #4e4f50;
+            --table-border: #3e3f40;
+            --header-bg: #2d88ff;
+            --header-text: white;
+            --info-bg: #263951;
+            --admin-bg: #40320c;
+            --admin-border: #66500e;
+            --row-bg: #2c2d2e;
+        }
+
+        body { font-family: Tahoma, sans-serif; background-color: var(--bg-color); color: var(--text-color); text-align: center; padding: 15px; margin: 0; }
+        .box { background: var(--box-bg); color: var(--text-color); padding: 20px; border-radius: 12px; width: 95%; max-width: 900px; margin: auto; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        
+        .notice-toggle-btn { background: #17a2b8; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: bold; width: 100%; margin-bottom: 12px; }
+        .notice-toggle-btn:hover { background: #138496; }
+
+        .site-notice { background: rgba(0, 123, 255, 0.1); border: 1px dashed var(--header-bg); padding: 10px; border-radius: 8px; font-size: 13px; margin-bottom: 15px; line-height: 1.6; text-align: center; display: none; }
+
+        input, button, select { padding: 10px; margin: 8px 0; width: 80%; font-size: 15px; border-radius: 6px; border: 1px solid var(--input-border); background-color: var(--input-bg); color: var(--input-text); }
+        button { background-color: #28a745; color: white; border: none; cursor: pointer; font-weight: bold; width: 82%; }
+        button:hover { background-color: #218838; }
+        .btn-admin { background-color: #007bff; width: 82%; }
+        .btn-admin:hover { background-color: #0056b3; }
+        .btn-danger { background-color: #dc3545; width: 82%; }
+        .btn-print { background-color: #17a2b8; margin-top: 15px; width: 82%; }
+        
+        .card { margin-top: 20px; padding: 15px; border: 2px solid var(--header-bg); border-radius: 8px; background: var(--box-bg); text-align: right; display: none; }
+        .info-header { background: var(--info-bg); padding: 10px; border-radius: 6px; margin-bottom: 15px; font-size: 14px; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 12px; }
+        th, td { border: 1px solid var(--table-border); padding: 6px; text-align: center; }
+        th { background-color: var(--header-bg); color: var(--header-text); }
+        
+        .admin-box { background: var(--admin-bg); border: 1px solid var(--admin-border); text-align: right; }
+        .admin-box input { width: 95%; display: block; margin: 6px auto; }
         .hidden { display: none; }
-        .toggle-link { color: #007bff; cursor: pointer; text-decoration: underline; margin-top: 15px; display: inline-block; font-size: 13px; }
+        
+        .subject-row { background: var(--row-bg); padding: 10px; margin-bottom: 10px; border-radius: 6px; border: 1px solid var(--table-border); text-align: right; }
+        .subject-row input { display: inline-block; margin: 2px; width: 8%; font-size: 13px; text-align: center; }
+        .subject-row .sub-name { width: 22%; text-align: right; }
+        
+        .top-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .lang-selector select { width: 160px; padding: 6px; }
+        .theme-btn { background: #6c757d; color: white; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-size: 13px; width: auto; }
+        .theme-btn:hover { background: #5a6268; }
+        
+        .text-red { color: #ff6b6b; font-weight: bold; }
+        .text-green { color: #2ecc71; font-weight: bold; }
     </style>
 </head>
-<body>
+<body id="bodyRoot">
 
-    <!-- بەشی سەرەکی وەرگرتنی نمرەی قوتابی -->
-    <div class="box">
-        <h2>پەیمانگای کۆمپیتەری دهۆک - سیستەمی نمرەکان</h2>
-        <label>قۆناغ هەڵبژێرە:</label>
-        <select id="selectGrade" onchange="loadClasses()">
-            <option value="">-- قۆناغ هەڵبژێرە --</option>
-            <option value="قۆناغی یەکەم">قۆناغی یەکەم</option>
-            <option value="قۆناغی دووەم">قۆناغی دووەم</option>
-        </select>
-
-        <label>پۆل هەڵبژێرە:</label>
-        <select id="selectClass">
-            <option value="">-- سەرەتا قۆناغ هەڵبژێرە --</option>
-        </select>
-
-        <br>
-        <button onclick="searchStudent()">پیشاندانی نمرە</button>
-        <div id="studentResult" style="margin-top: 15px;"></div>
-
-        <!-- بەستەری شاردراوە بۆ چوونەژووری مامۆستایان -->
-        <br>
-        <span class="toggle-link" onclick="toggleAdminLogin()">چوونەژووری مامۆستایان / بەڕێوەبەر</span>
+<div class="box">
+    <button type="button" class="notice-toggle-btn" id="noticeBtnText" onclick="toggleNotice()">📌 تێبینی و مافی بڵاوکردنەوە (کلیک بکە بۆ دەرخستن)</button>
+    
+    <div class="site-notice" id="siteNoticeBox">
+        📌 ئەم سايته بەس بۆ مامۆستا و قوتابی پەیمانگای کۆمپیوتەری دهۆک دروست کراوە.<br>
+        🔒 مافی ئەم کارته پارێزراوە. <b>دروست کردنی: هۆگر حوسێن</b>
     </div>
 
-    <!-- پەنجەرەی چوونەژووری مامۆستا (شاردراوەیە بە بنەڕەت) -->
-    <div id="adminLoginBox" class="box hidden">
-        <h3>چوونەژووری بەڕێوەبەر</h3>
-        <input type="password" id="adminPassInput" placeholder="وشەی تێپەڕ بنووسە">
-        <br>
-        <button onclick="checkAdminLogin()">چوونەژوورەوە</button>
+    <div class="top-controls">
+        <div class="lang-selector">
+            <select id="languageSelect" onchange="changeLanguage()">
+                <option value="badini">کوردی (بادینی)</option>
+                <option value="sorani">کوردی (سۆرانی)</option>
+                <option value="ar">العربية</option>
+                <option value="en">English</option>
+            </select>
+        </div>
+        <button type="button" class="theme-btn" onclick="toggleTheme()" id="themeBtn">🌙 دۆخی تاریک</button>
     </div>
 
-    <!-- کۆنترۆڵ پەنەڵی مامۆستایان (شاردراوەیە بە بنەڕەت) -->
-    <div id="adminPanel" class="box hidden">
-        <h3>پەنەڵی بەڕێوەبردنی نمرەکان</h3>
-        <p>لێرە دەتوانیت نمرەی قوتابیان زیاد بکەیت یان دەستکاری بکەیت.</p>
+    <h2 id="mainTitle">Duhok Computer - سیستەمێ نمراتییا پەیمانگەهێ</h2>
+    <p id="subInstruction">ژ بۆ دیتینا کارتا نمران، کۆدێ قوتابی ل ڤێرێ بنڤێسە:</p>
+    
+    <input type="text" id="code" placeholder="کۆدی قوتابی">
+    <br>
+    <button type="button" onclick="searchStudent()" id="searchBtn">پشکنیتا کارتا نمران</button>
+
+    <div id="result" class="card">
+        <div class="info-header">
+            <p><strong id="lblName">ناڤێ قوتابی:</strong> <span id="sName"></span></p>
+            <p><strong id="lblDept">بەش:</strong> <span id="sDept"></span> &nbsp;&nbsp;|&nbsp;&nbsp; <strong id="lblStage">قۆناغ:</strong> <span id="sStage"></span></p>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th id="thSubName">بابەتەکان</th>
+                    <th id="thC1">تێکڕای کۆرسی یەکەم<br>(20)</th>
+                    <th id="thC2">تێکڕای کۆرسی دووەم<br>(20)</th>
+                    <th id="thYearWork">کۆششی ساڵانە<br>(40)</th>
+                    <th id="thEx1">تاقیکردنەوەی خولی یەکەم<br>(60)</th>
+                    <th id="thTot1">نمرەی خولی یەکەم<br>(100)</th>
+                    <th id="thEx2">تاقیکردنەوەی خولی دووەم<br>(60)</th>
+                    <th id="thTot2">نمرەی خولی دووەم<br>(100)</th>
+                    <th id="thFinal">نمرەی کۆتایی ساڵ<br>(100)</th>
+                    <th id="thUnit">ژمارەیەکە</th>
+                    <th id="thStatus">ئەنجام</th>
+                </tr>
+            </thead>
+            <tbody id="gradesTableBody"></tbody>
+        </table>
         
-        <input type="text" id="stuName" placeholder="ناوی قوتابی">
-        <select id="stuGrade">
-            <option value="قۆناغی یەکەم">قۆناغی یەکەم</option>
-            <option value="قۆناغی دووەم">قۆناغی دووەم</option>
-        </select>
-        <input type="text" id="stuClass" placeholder="ناوی پۆل (بۆ نموونە: پۆلی A)">
-        <input type="text" id="stuScores" placeholder="نمرەکان (بابەتەکان)">
-        <br>
-        <button onclick="saveStudent()">تۆمارکردنی قوتابی</button>
-        <br><br>
-        <button onclick="logoutAdmin()" style="background: #dc3545;">دەرچوون</button>
+        <div style="margin-top: 15px; font-size: 15px; text-align: center;">
+            <p><strong id="lblAverage">سەرژمەری گشتی (المعدل):</strong> <span id="sAverage" style="color: var(--header-bg); font-weight: bold;"></span></p>
+            <p style="margin-top: 5px;"><strong id="lblFinalStatus">ئەنجامێ گشتی:</strong> <span id="sFinalStatus" style="font-weight: bold;"></span></p>
+            <div id="failedSubjectsContainer" style="margin-top: 8px; font-weight: bold;"></div>
+        </div>
+
+        <button type="button" class="btn-print" onclick="window.print()" id="btnPrint">🖨️ چاپکردنی کارتی نمرەکان</button>
     </div>
+</div>
 
-    <script>
-        // سیستەمی پاشەکەوتکردن بە localStorage
-        let db = JSON.parse(localStorage.getItem('instituteDatabase')) || [];
-        let adminPass = localStorage.getItem('adminPassword') || '1234';
+<div class="box admin-box hidden" id="loginBox" style="text-align: center;">
+    <h3 id="adminLoginTitle">چوونا مامۆستایی (Admin Login)</h3>
+    <p id="adminPassText">تکایە پەیڤا تێپەڕ (Password) بنڤێسە:</p>
+    <input type="password" id="adminPassword" placeholder="پەیڤا تێپەڕ بنڤێسە">
+    <br>
+    <button type="button" class="btn-admin" onclick="checkAdminLogin()" id="adminLoginBtn">چوونەژوورەوە</button>
+</div>
 
-        function loadClasses() {
-            let grade = document.getElementById('selectGrade').value;
-            let classSelect = document.getElementById('selectClass');
-            classSelect.innerHTML = '<option value="">-- پۆل هەڵبژێرە --</option>';
-            
-            let filtered = db.filter(s => s.grade === grade);
-            let classes = [...new Set(filtered.map(s => s.className))];
-            
-            classes.forEach(c => {
-                let opt = document.createElement('option');
-                opt.value = c;
-                opt.textContent = c;
-                classSelect.appendChild(opt);
-            });
+<div class="box admin-box hidden" id="adminPanel">
+    <h3 style="text-align: center;">بەشا مامۆستایی (رێڤەبرنا قوتابیان)</h3>
+    
+    <label>کۆدێ قوتابی:</label>
+    <input type="text" id="newCode" placeholder="کۆدی قوتابی" oninput="loadStudentData()">
+    
+    <label>ناڤێ تەواڤ یێ قوتابی:</label>
+    <input type="text" id="newName" placeholder="ناڤێ قوتابی">
+    
+    <label>بەش:</label>
+    <input type="text" id="newDept" placeholder="بەش">
+    
+    <label>قۆناغ:</label>
+    <input type="text" id="newStage" placeholder="قۆناغ">
+
+    <h4 style="margin-top: 15px;">ماددەکان و نمرەکان:</h4>
+    <div id="subjectsInputsContainer"></div>
+    
+    <button type="button" onclick="addSubjectInput()" style="background-color: #17a2b8; width: 100%; margin-top: 5px;">+ زێدەکرنا ماددەکا دی</button>
+
+    <button type="button" class="btn-admin" onclick="addNewStudent()" style="width: 100%; margin-top: 15px;">تۆمارکرن / گوهۆڕینا قوتابی</button>
+    
+    <hr style="margin: 20px 0; border: 0; border-top: 1px solid var(--admin-border);">
+    
+    <h4 style="text-align: center;">گۆڕینی وشەی تێپەڕی (Password)</h4>
+    <input type="password" id="oldPasswordInput" placeholder="پەیڤا تێپەڕا جاران (کۆن)">
+    <input type="password" id="newPasswordInput" placeholder="پەیڤا تێپەڕا نوو">
+    <button type="button" onclick="changeAdminPassword()" style="background-color: #ffc107; color: #333; width: 100%; margin-top: 5px; font-weight: bold;">گۆڕینی پاشۆرد</button>
+
+    <hr style="margin: 20px 0; border: 0; border-top: 1px solid var(--admin-border);">
+
+    <h4 style="text-align: center;">پاراستن و هێنانا داتایان (Backup / Restore)</h4>
+    <button type="button" onclick="exportDatabase()" style="background-color: #17a2b8; width: 100%; margin-top: 5px;">📥 داگرتنا باک ئەپی داتایان (Export)</button>
+    
+    <label style="display: block; margin-top: 10px;">هەڵبژاردنی فایلی باک ئەپ بۆ گەڕاندنەوە:</label>
+    <input type="file" id="importFile" accept=".json" onchange="importDatabase(event)" style="width: 95%;">
+
+    <br><br>
+    <button type="button" class="btn-danger" onclick="logoutAdmin()">چوونە دەرڤە</button>
+</div>
+
+<div style="margin-top: 30px; text-align: center;">
+    <a href="#" onclick="openAdminPortal(event)" id="adminPortalLink" style="color: var(--text-color); opacity: 0.7; font-size: 12px; text-decoration: none;">چوونا تایبەت بە مامۆستایان</a>
+</div>
+
+<script>
+    const texts = {
+        badini: {
+            mainTitle: "Duhok Computer - سیستەمێ نمراتییا پەیمانگەهێ",
+            subInstruction: "ژ بۆ دیتینا کارتا نمران، کۆدێ قوتابی ل ڤێرێ بنڤێسە:",
+            placeholderCode: "کۆدی قوتابی",
+            searchBtn: "پشکنیتا کارتا نمران",
+            noticeBtn: "📌 تێبینی و مافی بڵاوکردنەوە (کلیک بکە بۆ دەرخستن)",
+            lblName: "ناڤێ قوتابی:",
+            lblDept: "بەش:",
+            lblStage: "قۆناغ:",
+            thSubName: "بابەتەکان",
+            thC1: "تێکڕای کۆرسی یەکەم<br>(20)",
+            thC2: "تێکڕای کۆرسی دووەم<br>(20)",
+            thYearWork: "کۆششی ساڵانە<br>(40)",
+            thEx1: "تاقیکردنەوەی خولی یەکەم<br>(60)",
+            thTot1: "نمرەی خولی یەکەم<br>(100)",
+            thEx2: "تاقیکردنەوەی خولی دووەم<br>(60)",
+            thTot2: "نمرەی خولی دووەم<br>(100)",
+            thFinal: "نمرەی کۆتایی ساڵ<br>(100)",
+            thUnit: "ژمارەیەکە",
+            thStatus: "ئەنجام",
+            lblAverage: "سەرژمەری گشتی (المعدل):",
+            lblFinalStatus: "ئەنجامێ گشتی:",
+            btnPrint: "🖨️ چاپکردنی کارتی نمرەکان",
+            themeDark: "🌙 دۆخی تاریک",
+            themeLight: "☀️ دۆخی ڕۆشناک",
+            adminLoginTitle: "چوونا مامۆستایی (Admin Login)",
+            adminPassText: "تکایە پەیڤا تێپەڕ (Password) بنڤێسە:",
+            adminLoginBtn: "چوونەژوورەوە",
+            adminPortalLink: "چوونا تایبەت بە مامۆستایان",
+            dir: "rtl"
+        },
+        sorani: {
+            mainTitle: "Duhok Computer - سیستەمی نمراتی پەیمانگا",
+            subInstruction: "بۆ بینینی کارتی نمرەکان، کۆدی قوتابی لێرە بنووسە:",
+            placeholderCode: "کۆدی قوتابی",
+            searchBtn: "پشکنینی کارتی نمرەکان",
+            noticeBtn: "📌 تێبینی و مافی بڵاوکردنەوە (کلیک بکە بۆ پیشاندان)",
+            lblName: "ناوی قوتابی:",
+            lblDept: "بەش:",
+            lblStage: "قۆناغ:",
+            thSubName: "بابەتەکان",
+            thC1: "تێکڕای کۆرسی یەکەم<br>(20)",
+            thC2: "تێکڕای کۆرسی دووەم<br>(20)",
+            thYearWork: "کۆششی ساڵانە<br>(40)",
+            thEx1: "تاقیکردنەوەی خولی یەکەم<br>(60)",
+            thTot1: "نمرەی خولی یەکەم<br>(100)",
+            thEx2: "تاقیکردنەوەی خولی دووەم<br>(60)",
+            thTot2: "نمرەی خولی دووەم<br>(100)",
+            thFinal: "نمرەی کۆتایی ساڵ<br>(100)",
+            thUnit: "ژمارەیەکە",
+            thStatus: "ئەنجام",
+            lblAverage: "مەعدەلی گشتی:",
+            lblFinalStatus: "ئەنجامی گشتی:",
+            btnPrint: "🖨️ چاپکردنی کارتی نمرەکان",
+            themeDark: "🌙 دۆخی تاریک",
+            themeLight: "☀️ دۆخی ڕۆشناک",
+            adminLoginTitle: "چوونەژووری مامۆستا",
+            adminPassText: "تکایە وشەی تێپەڕ (Password) بنووسە:",
+            adminLoginBtn: "چوونەژوورەوە",
+            adminPortalLink: "چوونەژووری تایبەت بە مامۆستایان",
+            dir: "rtl"
+        },
+        ar: {
+            mainTitle: "Duhok Computer - نظام درجات المعهد",
+            subInstruction: "لعرض كارت الدرجات، أدخل كود الطالب هنا:",
+            placeholderCode: "كود الطالب",
+            searchBtn: "بحث عن كارت الدرجات",
+            noticeBtn: "📌 ملاحظات وحقوق النشر (انقر للعرض)",
+            lblName: "اسم الطالب:",
+            lblDept: "القسم:",
+            lblStage: "المرحلة:",
+            thSubName: "المواد",
+            thC1: "سعي الكورس الأول<br>(20)",
+            thC2: "سعي الكورس الثاني<br>(20)",
+            thYearWork: "السعي السنوي<br>(40)",
+            thEx1: "امتحان الدور الأول<br>(60)",
+            thTot1: "درجة الدور الأول<br>(100)",
+            thEx2: "امتحان الدور الثاني<br>(60)",
+            thTot2: "درجة الدور الثاني<br>(100)",
+            thFinal: "الدرجة النهائية<br>(100)",
+            thUnit: "الوحدة",
+            thStatus: "النتيجة",
+            lblAverage: "المعدل العام:",
+            lblFinalStatus: "النتيجة النهائية:",
+            btnPrint: "🖨️ طباعة كارت الدرجات",
+            themeDark: "🌙 الوضع الداكن",
+            themeLight: "☀️ الوضع الفاتح",
+            adminLoginTitle: "تسجيل دخول المشرف",
+            adminPassText: "يرجى إدخال كلمة المرور:",
+            adminLoginBtn: "تسجيل الدخول",
+            adminPortalLink: "بوابة الأساتذة الخاصة",
+            dir: "rtl"
+        },
+        en: {
+            mainTitle: "Duhok Computer - Institute Grade System",
+            subInstruction: "Enter student code below to view grade card:",
+            placeholderCode: "Student Code",
+            searchBtn: "Search Grade Card",
+            noticeBtn: "📌 Notice & Copyright (Click to Show)",
+            lblName: "Student Name:",
+            lblDept: "Department:",
+            lblStage: "Stage:",
+            thSubName: "Subjects",
+            thC1: "Term 1 Avg<br>(20)",
+            thC2: "Term 2 Avg<br>(20)",
+            thYearWork: "Year Work<br>(40)",
+            thEx1: "First Term Exam<br>(60)",
+            thTot1: "First Term Total<br>(100)",
+            thEx2: "Second Term Exam<br>(60)",
+            thTot2: "Second Term Total<br>(100)",
+            thFinal: "Final Grade<br>(100)",
+            thUnit: "Unit",
+            thStatus: "Status",
+            lblAverage: "Average:",
+            lblFinalStatus: "Final Status:",
+            btnPrint: "🖨️ Print Grade Card",
+            themeDark: "🌙 Dark Mode",
+            themeLight: "☀️ Light Mode",
+            adminLoginTitle: "Admin Login",
+            adminPassText: "Please enter password:",
+            adminLoginBtn: "Login",
+            adminPortalLink: "Teacher Portal",
+            dir: "ltr"
         }
+    };
 
-        function searchStudent() {
-            let grade = document.getElementById('selectGrade').value;
-            let className = document.getElementById('selectClass').value;
-            let resDiv = document.getElementById('studentResult');
+    function toggleNotice() {
+        let noticeBox = document.getElementById("siteNoticeBox");
+        noticeBox.style.display = (noticeBox.style.display === "block") ? "none" : "block";
+    }
 
-            let filtered = db.filter(s => s.grade === grade && s.className === className);
-            if(filtered.length === 0) {
-                resDiv.innerHTML = '<p style="color:red;">هیچ قوتابییەک نەدۆزرایەوە.</p>';
-                return;
+    function changeLanguage() {
+        let lang = document.getElementById("languageSelect").value;
+        localStorage.setItem("selectedLang", lang);
+        let t = texts[lang];
+        let isDark = document.documentElement.getAttribute("data-theme") === "dark";
+
+        document.getElementById("htmlRoot").setAttribute("dir", t.dir);
+        document.getElementById("mainTitle").innerText = t.mainTitle;
+        document.getElementById("subInstruction").innerText = t.subInstruction;
+        document.getElementById("code").placeholder = t.placeholderCode;
+        document.getElementById("searchBtn").innerText = t.searchBtn;
+        document.getElementById("noticeBtnText").innerText = t.noticeBtn;
+        document.getElementById("lblName").innerText = t.lblName;
+        document.getElementById("lblDept").innerText = t.lblDept;
+        document.getElementById("lblStage").innerText = t.lblStage;
+        document.getElementById("thSubName").innerHTML = t.thSubName;
+        document.getElementById("thC1").innerHTML = t.thC1;
+        document.getElementById("thC2").innerHTML = t.thC2;
+        document.getElementById("thYearWork").innerHTML = t.thYearWork;
+        document.getElementById("thEx1").innerHTML = t.thEx1;
+        document.getElementById("thTot1").innerHTML = t.thTot1;
+        document.getElementById("thEx2").innerHTML = t.thEx2;
+        document.getElementById("thTot2").innerHTML = t.thTot2;
+        document.getElementById("thFinal").innerHTML = t.thFinal;
+        document.getElementById("thUnit").innerHTML = t.thUnit;
+        document.getElementById("thStatus").innerHTML = t.thStatus;
+        document.getElementById("lblAverage").innerText = t.lblAverage;
+        document.getElementById("lblFinalStatus").innerText = t.lblFinalStatus;
+        document.getElementById("btnPrint").innerText = t.btnPrint;
+        document.getElementById("adminLoginTitle").innerText = t.adminLoginTitle;
+        document.getElementById("adminPassText").innerText = t.adminPassText;
+        document.getElementById("adminLoginBtn").innerText = t.adminLoginBtn;
+        document.getElementById("adminPortalLink").innerText = t.adminPortalLink;
+        document.getElementById("themeBtn").innerText = isDark ? t.themeLight : t.themeDark;
+    }
+
+    function toggleTheme() {
+        let html = document.documentElement;
+        let lang = document.getElementById("languageSelect").value;
+        let t = texts[lang];
+        let themeBtn = document.getElementById("themeBtn");
+
+        if (html.getAttribute("data-theme") === "dark") {
+            html.removeAttribute("data-theme");
+            localStorage.setItem("theme", "light");
+            themeBtn.innerText = t.themeDark;
+        } else {
+            html.setAttribute("data-theme", "dark");
+            localStorage.setItem("theme", "dark");
+            themeBtn.innerText = t.themeLight;
+        }
+    }
+
+    let database = JSON.parse(localStorage.getItem("instituteDatabase")) || {
+        "246229": {
+            name: "هۆگر حوسێن جبڕائیل عوسمان",
+            dept: "پڕۆگرامسازی کۆمپیوتەر",
+            stage: "دووەم",
+            subjects: [
+                { name: "پەروەردەیا ئیسلامی", c1: "13", c2: "14", yw: "27", ex1: "39", tot1: "66", ex2: "", tot2: "", final: "66", unit: "1" },
+                { name: "زمان و ئەدەبی کوردی", c1: "9", c2: "9", yw: "18", ex1: "30", tot1: "50", ex2: "", tot2: "", final: "50", unit: "2" },
+                { name: "پڕۆگرامسازی (MS Access)", c1: "10", c2: "10", yw: "21", ex1: "43", tot1: "64", ex2: "", tot2: "", final: "64", unit: "3" }
+            ]
+        }
+    };
+
+    window.onload = function() {
+        let savedLang = localStorage.getItem("selectedLang") || "badini";
+        document.getElementById("languageSelect").value = savedLang;
+        
+        let savedTheme = localStorage.getItem("theme");
+        if (savedTheme === "dark") {
+            document.documentElement.setAttribute("data-theme", "dark");
+        }
+        changeLanguage();
+
+        let container = document.getElementById("subjectsInputsContainer");
+        if (container && container.children.length === 0) {
+            for (let i = 0; i < 3; i++) {
+                addSubjectInput();
             }
+        }
+    };
 
-            let html = '<table><tr><th>ناوی قوتابی</th><th>نمرەکان</th></tr>';
-            filtered.forEach(s => {
-                html += `<tr><td>${s.name}</td><td>${s.scores}</td></tr>`;
+    function addSubjectInput(subName="", c1="", c2="", yw="", ex1="", tot1="", ex2="", tot2="", final="", unit="") {
+        let container = document.getElementById("subjectsInputsContainer");
+        let div = document.createElement("div");
+        div.className = "subject-row";
+        div.innerHTML = `
+            <input type="text" class="sub-name" value="${subName}" placeholder="ناوی بابەت">
+            <input type="number" class="sub-c1" value="${c1}" placeholder="ک1">
+            <input type="number" class="sub-c2" value="${c2}" placeholder="ک2">
+            <input type="number" class="sub-yw" value="${yw}" placeholder="ساڵ">
+            <input type="number" class="sub-ex1" value="${ex1}" placeholder="خول1">
+            <input type="number" class="sub-tot1" value="${tot1}" placeholder="گشتی1">
+            <input type="number" class="sub-ex2" value="${ex2}" placeholder="خول2">
+            <input type="number" class="sub-tot2" value="${tot2}" placeholder="گشتی2">
+            <input type="number" class="sub-final" value="${final}" placeholder="کۆتایی">
+            <input type="number" class="sub-unit" value="${unit}" placeholder="ژ.ک">
+            <button type="button" onclick="this.parentElement.remove()" style="background-color: #dc3545; width: auto; padding: 4px 8px; font-size: 11px;">✕</button>
+        `;
+        container.appendChild(div);
+    }
+
+    function loadStudentData() {
+        let code = document.getElementById("newCode").value.trim();
+        let nameInput = document.getElementById("newName");
+        let deptInput = document.getElementById("newDept");
+        let stageInput = document.getElementById("newStage");
+        let container = document.getElementById("subjectsInputsContainer");
+
+        if (database[code]) {
+            let student = database[code];
+            nameInput.value = student.name;
+            deptInput.value = student.dept;
+            stageInput.value = student.stage;
+
+            container.innerHTML = "";
+            student.subjects.forEach(sub => {
+                addSubjectInput(sub.name, sub.c1, sub.c2, sub.yw, sub.ex1, sub.tot1, sub.ex2, sub.tot2, sub.final, sub.unit);
             });
-            html += '</table>';
-            resDiv.innerHTML = html;
         }
+    }
 
-        function toggleAdminLogin() {
-            let loginBox = document.getElementById('adminLoginBox');
-            loginBox.classList.toggle('hidden');
-        }
+    function searchStudent() {
+        let val = document.getElementById("code").value.trim();
+        let resCard = document.getElementById("result");
+        let tbody = document.getElementById("gradesTableBody");
 
-        function checkAdminLogin() {
-            let pass = document.getElementById('adminPassInput').value;
-            if(pass === adminPass) {
-                document.getElementById('adminLoginBox').classList.add('hidden');
-                document.getElementById('adminPanel').classList.remove('hidden');
+        if (database[val]) {
+            let student = database[val];
+            document.getElementById("sName").innerText = student.name;
+            document.getElementById("sDept").innerText = student.dept;
+            document.getElementById("sStage").innerText = student.stage;
+
+            tbody.innerHTML = "";
+            let totalFinalSum = 0;
+            let count = 0;
+            let failedList = [];
+
+            student.subjects.forEach(sub => {
+                let finalVal = Number(sub.final) || 0;
+                totalFinalSum += finalVal;
+                count++;
+
+                let formatGrade = (g) => {
+                    if(g === "" || g === undefined || g === null) return "";
+                    let num = Number(g);
+                    return num < 50 ? `<span class="text-red">${num}</span>` : num;
+                };
+
+                let statusText = finalVal >= 50 ? `<span class="text-green">دەرچوو</span>` : `<span class="text-red">کەوتوو</span>`;
+
+                if (finalVal < 50 && finalVal > 0) {
+                    failedList.push(`${sub.name} (${finalVal})`);
+                }
+
+                let row = `<tr>
+                    <td style="text-align: right; padding-right: 6px;">${sub.name}</td>
+                    <td>${sub.c1}</td>
+                    <td>${sub.c2}</td>
+                    <td>${sub.yw}</td>
+                    <td>${sub.ex1}</td>
+                    <td><b>${formatGrade(sub.tot1)}</b></td>
+                    <td>${sub.ex2}</td>
+                    <td><b>${formatGrade(sub.tot2)}</b></td>
+                    <td><b>${formatGrade(sub.final)}</b></td>
+                    <td>${sub.unit}</td>
+                    <td>${statusText}</td>
+                </tr>`;
+                tbody.innerHTML += row;
+            });
+
+            let average = count > 0 ? (totalFinalSum / count).toFixed(2) : 0;
+            document.getElementById("sAverage").innerHTML = average < 50 ? `<span class="text-red">${average}</span>` : average;
+
+            let finalStatusElem = document.getElementById("sFinalStatus");
+            let failedContainer = document.getElementById("failedSubjectsContainer");
+
+            if (failedList.length === 0) {
+                finalStatusElem.innerText = "دەرچوو ب سەرکەفتن / ناجح";
+                finalStatusElem.className = "text-green";
+                failedContainer.innerHTML = "";
             } else {
-                alert('وشەی تێپەڕ هەڵەیە!');
-            }
-        }
-
-        function saveStudent() {
-            let name = document.getElementById('stuName').value;
-            let grade = document.getElementById('stuGrade').value;
-            let className = document.getElementById('stuClass').value;
-            let scores = document.getElementById('stuScores').value;
-
-            if(!name || !className || !scores) {
-                alert('تکایە هەموو خانەکان پڕ بکەرەوە!');
-                return;
+                finalStatusElem.innerText = "ماوە (کەوتوو) / راسب";
+                finalStatusElem.className = "text-red";
+                failedContainer.innerHTML = `<span class="text-red">ماددەیێن کەوتوو: ` + failedList.join(", ") + `</span>`;
             }
 
-            db.push({name, grade, className, scores});
-            localStorage.setItem('instituteDatabase', JSON.stringify(db));
-            alert('قوتابی بە سەرکەوتوویی تۆمار کرا!');
-            
-            document.getElementById('stuName').value = '';
-            document.getElementById('stuClass').value = '';
-            document.getElementById('stuScores').value = '';
+            resCard.style.display = "block";
+        } else {
+            alert("کۆدێ قوتابی نەهاتە دیتن!");
+            resCard.style.display = "none";
+        }
+    }
+
+    function openAdminPortal(e) {
+        e.preventDefault();
+        let loginBox = document.getElementById("loginBox");
+        loginBox.classList.toggle("hidden");
+    }
+
+    function checkAdminLogin() {
+        let pass = document.getElementById("adminPassword").value.trim();
+        let currentAdminPass = localStorage.getItem("adminPassword") || "1234";
+        
+        if (pass === currentAdminPass) {
+            document.getElementById("loginBox").classList.add("hidden");
+            document.getElementById("adminPanel").classList.remove("hidden");
+            document.getElementById("adminPassword").value = "";
+        } else {
+            alert("پەیڤا تێپەڕ هەڵە یە!");
+        }
+    }
+
+    function logoutAdmin() {
+        document.getElementById("adminPanel").classList.add("hidden");
+        document.getElementById("loginBox").classList.add("hidden");
+    }
+
+    function changeAdminPassword() {
+        let oldPassInput = document.getElementById("oldPasswordInput").value.trim();
+        let newPassInput = document.getElementById("newPasswordInput").value.trim();
+        let currentAdminPass = localStorage.getItem("adminPassword") || "1234";
+
+        if (oldPassInput === "" || newPassInput === "") {
+            alert("تکایە هەردوو خانەیێن پاشۆردی پڕ بکە!");
+            return;
         }
 
-        function logoutAdmin() {
-            document.getElementById('adminPanel').classList.add('hidden');
-            document.getElementById('adminPassInput').value = '';
+        if (oldPassInput === currentAdminPass) {
+            localStorage.setItem("adminPassword", newPassInput);
+            alert("پەیڤا تێپەڕ ب سەرکەفتن هاتە گۆڕین!");
+            document.getElementById("oldPasswordInput").value = "";
+            document.getElementById("newPasswordInput").value = "";
+        } else {
+            alert("پەیڤا تێپەڕا کۆن (پاشۆردی جاران) هەڵە یە!");
         }
-    </script>
+    }
+
+    function addNewStudent() {
+        let code = document.getElementById("newCode").value.trim();
+        let name = document.getElementById("newName").value.trim();
+        let dept = document.getElementById("newDept").value.trim();
+        let stage = document.getElementById("newStage").value.trim();
+
+        if (code === "" || name === "" || dept === "") {
+            alert("تکایە خانەیێن سەرەکی پڕ بکە!");
+            return;
+        }
+
+        let subjectsArr = [];
+        let rows = document.querySelectorAll("#subjectsInputsContainer .subject-row");
+
+        rows.forEach(row => {
+            let sName = row.querySelector(".sub-name").value.trim();
+            let c1 = row.querySelector(".sub-c1").value.trim();
+            let c2 = row.querySelector(".sub-c2").value.trim();
+            let yw = row.querySelector(".sub-yw").value.trim();
+            let ex1 = row.querySelector(".sub-ex1").value.trim();
+            let tot1 = row.querySelector(".sub-tot1").value.trim();
+            let ex2 = row.querySelector(".sub-ex2").value.trim();
+            let tot2 = row.querySelector(".sub-tot2").value.trim();
+            let final = row.querySelector(".sub-final").value.trim();
+            let unit = row.querySelector(".sub-unit").value.trim();
+
+            if (sName !== "") {
+                subjectsArr.push({ name: sName, c1, c2, yw, ex1, tot1, ex2, tot2, final, unit });
+            }
+        });
+
+        database[code] = { name, dept, stage, subjects: subjectsArr };
+        localStorage.setItem("instituteDatabase", JSON.stringify(database));
+        alert("داتایێن قوتابی ب سەرکەفتن هاتنە تۆمارکرن!");
+    }
+
+    function exportDatabase() {
+        let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(database, null, 2));
+        let downloadAnchor = document.createElement('a');
+        downloadAnchor.setAttribute("href", dataStr);
+        downloadAnchor.setAttribute("download", "duhok_computer_grades_backup.json");
+        document.body.appendChild(downloadAnchor);
+        downloadAnchor.click();
+        downloadAnchor.remove();
+    }
+
+    function importDatabase(event) {
+        let file = event.target.files[0];
+        if (!file) return;
+
+        let reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                let importedData = JSON.parse(e.target.result);
+                if (importedData && typeof importedData === 'object') {
+                    database = importedData;
+                    localStorage.setItem("instituteDatabase", JSON.stringify(database));
+                    alert("داتایێن باک ئەپ ب سەرکەفتن هاتنە هۆڤەئینان (Restore)!");
+                } else {
+                    alert("فایل هەڵەیە!");
+                }
+            } catch (err) {
+                alert("خەلەتی د خواندنا فایلیدا هەبوو!");
+            }
+        };
+        reader.readAsText(file);
+    }
+</script>
+
 </body>
 </html>
